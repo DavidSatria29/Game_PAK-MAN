@@ -13,6 +13,17 @@ from sprites import LifeSprites
 from sprites import MazeSprites
 from mazedata import MazeData
 
+#musik
+pygame.mixer.init()
+suara_jalan = pygame.mixer.Sound('jalan.mp3')
+suara_mati = pygame.mixer.Sound('mati.wav')
+suara_menang = pygame.mixer.Sound('menang.wav')
+suara_makan = pygame.mixer.Sound('pelet.wav')
+suara_bunuh = pygame.mixer.Sound('bunuh.wav')
+
+pygame.mixer.music.load('musik2.mp3')
+pygame.mixer.music.play(-1)
+
 # Define GameController class
 class GameController(object):
     # Initialize GameController object
@@ -176,9 +187,13 @@ class GameController(object):
                 if event.key == K_SPACE:
                     if self.pacman.alive:
                         self.pause.setPause(playerPaused=True)
+                        pygame.mixer.music.pause()
+                        suara_jalan.stop()
                         if not self.pause.paused:
                             self.textgroup.hideText()
                             self.showEntities()
+                            pygame.mixer.music.unpause()
+                            suara_jalan.play(-1)
                         else:
                             self.textgroup.showText(PAUSETXT)
 
@@ -197,6 +212,7 @@ class GameController(object):
             if pellet.name == POWERPELLET:
                 if pellet.color == ORANGE: 
                     self.ghosts.startFreight()
+                    suara_makan.play()
                 if pellet.color == RED:
                     self.pacman.setSpeed(170)
                 if pellet.color == BLUE:
@@ -208,6 +224,8 @@ class GameController(object):
                 self.flashBG = True
                 self.hideEntities()
                 self.pause.setPause(pauseTime=3, func=self.nextLevel)
+                suara_menang.play()
+                suara_jalan.stop()
 
     # Define checkGhostEvents method to handle ghost-related events during gameplay
     def checkGhostEvents(self):
@@ -224,12 +242,15 @@ class GameController(object):
                     self.pause.setPause(pauseTime=1, func=self.showEntities)
                     ghost.startSpawn()
                     self.nodes.allowHomeAccess(ghost)
+                    suara_bunuh.play()
                 elif ghost.mode.current is not SPAWN:  # If ghost is not in "spawn" mode, update game state accordingly
                     if self.pacman.alive:
                         self.lives -=  1
                         self.lifesprites.removeImage()
                         self.pacman.die()
                         self.ghosts.hide()
+                        suara_jalan.stop()
+                        suara_mati.play()
                         if self.lives <= 0:
                             self.textgroup.showText(GAMEOVERTXT)
                             self.pause.setPause(pauseTime=3, func=self.restartGame)
