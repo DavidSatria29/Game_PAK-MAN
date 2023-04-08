@@ -25,8 +25,10 @@ suara_slowmo = pygame.mixer.Sound('slowmo.wav')
 suara_speed = pygame.mixer.Sound('speed.wav')
 suara_hantu = pygame.mixer.Sound('hantu.wav')
 suara_teleport = pygame.mixer.Sound('teleport.wav')
+suara_kerjabagus = pygame.mixer.Sound('kerjabagus.wav')
 pygame.mixer.music.load('musik2.mp3')
 pygame.mixer.music.play(-1)
+suara_kerjabagus.play()
 
 # Define GameController class
 class GameController(object):
