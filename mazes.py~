@@ -1,0 +1,243 @@
+from vector import Vector2
+from constants import *
+
+class MazeBase(object):
+    def __init__(self):
+        self.name = ""
+        self.portalPairs = {}
+        self.homeoffset = []
+        self.homenodeconnectLeft = []
+        self.homenodeconnectRight = []
+        self.pacmanStart = []
+        self.fruitStart = []
+        self.ghostNodeDeny = {UP:None, DOWN:None, LEFT:None, RIGHT:None}
+
+    def setup(self, nodegroup, pacman, ghostgroup):
+        self.setPortals(nodegroup)
+        self.denyAccess(nodegroup, pacman, ghostgroup)
+
+    def denyAccess(self, nodegroup, pacman, ghostgroup):
+        nodegroup.denyHomeAccess(pacman)
+        nodegroup.denyHomeAccessList(ghostgroup)
+        x, y = self.addoffset(2, 3)
+        nodegroup.denyAccessList(x, y, LEFT, ghostgroup)
+        nodegroup.denyAccessList(x, y, RIGHT, ghostgroup)
+
+        for direction in list(self.ghostNodeDeny.keys()):
+            if self.ghostNodeDeny[direction] is not None:
+                for x, y in self.ghostNodeDeny[direction]:
+                    nodegroup.denyAccessList(x, y, direction, ghostgroup)
+
+
+    def getPacmanStartNode(self, nodegroup):
+        pacstartkey = nodegroup.constructKey(*self.pacmanStart)
+        return nodegroup.nodesLUT[pacstartkey]
+
+    def getBlinkyStartNode(self, nodegroup):
+        return self.getGhostStart(nodegroup, 2, 0)
+
+    def getPinkyStartNode(self, nodegroup):
+        return self.getGhostStart(nodegroup, 2, 3)
+
+    def getInkyStartNode(self, nodegroup):
+        return self.getGhostStart(nodegroup, 0, 3)
+
+    def getClydeStartNode(self, nodegroup):
+        return self.getGhostStart(nodegroup, 4, 3)
+
+    def getGhostStart(self, nodegroup, x, y):
+        key = nodegroup.constructKey(*self.addoffset(x, y))
+        return nodegroup.nodesLUT[key]
+
+    def getSpawnNode(self, nodegroup):
+        spawnkey = nodegroup.constructKey(*self.addoffset(2, 3))
+        return nodegroup.nodesLUT[spawnkey]
+
+    def getFruitNode(self, nodegroup):
+        key = nodegroup.constructKey(*self.fruitStart)
+        return nodegroup.nodesLUT[key]
+
+    def setPortals(self, nodegroup):
+        for key in list(self.portalPairs.keys()):
+            p1, p2 = self.portalPairs[key]
+            nodegroup.setPortalPair(p1, p2)
+
+    def connectHomeNodes(self, nodegroup):
+        homekey = nodegroup.createHomeNodes(*self.homeoffset)
+        nodegroup.connectHomeNodes(homekey, self.homenodeconnectLeft, LEFT)
+        nodegroup.connectHomeNodes(homekey, self.homenodeconnectRight, RIGHT)
+
+    def addoffset(self, x, y):
+        return x+self.homeoffset[0], y+self.homeoffset[1]
+
+class Maze1(MazeBase):
+    def __init__(self):
+        MazeBase.__init__(self)
+        self.name = "maze1"
+        self.portalPairs = {0:((0, 17), (27, 17))}
+        self.homeoffset = (11.5, 14)
+        self.homenodeconnectLeft = (12, 14)
+        self.homenodeconnectRight = (15, 14)
+        self.pacmanStart = (15, 26)
+        self.fruitStart = (9, 20)
+        self.ghostNodeDeny = {UP:((12, 14), (15, 14), (12, 26), (15, 26))}
+
+class Maze2(MazeBase):
+    def __init__(self):
+        MazeBase.__init__(self)
+        self.name = "maze2"
+        self.portalPairs = {0:((0, 4), (27, 4)), 1:((0, 26), (27, 26))}
+        self.homeoffset = (11.5, 14)
+        self.homenodeconnectLeft = (9, 14)
+        self.homenodeconnectRight = (18, 14)
+        self.pacmanStart = (16, 26)
+        self.fruitStart = (11, 20)
+        self.ghostNodeDeny = {UP:((9, 14), (18, 14), (11, 23), (16, 23))}
+
+class MazeController(object):
+    def __init__(self):
+        self.mazedict = {0:Maze1, 1:Maze2}
+
+    def loadMaze(self, level):
+        return self.mazedict[level%len(self.mazedict)]()
+
+
+import pygame
+import abc
+import numpy as np
+from vector import Vector2
+from constants import *
+
+# Define an abstract base class to represent pellets
+class Pellet(abc.ABC):
+    # Initialize pellet properties
+    def __init__(self, row, column):
+        self.position = Vector2(column*TILEWIDTH, row*TILEHEIGHT)
+        self.visible = True
+
+    # Render the pellet on screen (must be implemented in concrete subclasses)
+    @abc.abstractmethod
+    def render(self, screen):
+        pass
+        
+# Define a concrete subclass to represent regular pellets
+class RegularPellet(Pellet):
+    # Initialize regular pellet properties
+    def __init__(self, row, column):
+        super().__init__(row, column)
+        self.name = PELLET
+        self.color = WHITE
+        self.radius = int(2 * TILEWIDTH / 16)
+        self.collideRadius = 2 * TILEWIDTH / 16
+        self.points = 10
+
+    # Render the regular pellet on screen
+    def render(self, screen):
+        if self.visible:
+            # Center the pellet in its tile
+            adjust = Vector2(TILEWIDTH, TILEHEIGHT) / 2
+            p = self.position + adjust
+            pygame.draw.circle(screen, self.color, p.asInt(), self.radius)
+
+# Define a concrete subclass to represent power pellets (inherits from Pellet class)
+class PowerPellet(RegularPellet):
+    # Initialize power pellet properties
+    def __init__(self, row, column):
+        super().__init__(row, column)
+        self.name = POWERPELLET
+        self.radius = int(8 * TILEWIDTH / 16)
+        self.points = 50
+        self.flashTime = 0.2
+        self.timer= 0
+
+    # Update power pellet status and visibility
+    def update(self, dt):
+        self.timer += dt
+        if self.timer >= self.flashTime:
+            self.visible = not self.visible
+            self.timer = 0
+
+    # Render the power pellet on screen
+    def render(self, screen):
+        if self.visible:
+            # Center the pellet in its tile
+            adjust = Vector2(TILEWIDTH, TILEHEIGHT) / 2
+            p = self.position + adjust
+            # Draw a circle of given color and radius at the desired position
+            pygame.draw.circle(screen, ORANGE, p.asInt(), self.radius)
+
+# Define a class to represent a collection of pellets
+class PelletGroup(object):
+    # Initialize an empty list of pellets and power pellets
+    def __init__(self, pelletfile):
+        self.pelletList = []
+        self.powerpellets = []
+        # Create the list of pellets based on data from a file
+        self.createPelletList(pelletfile)
+        self.numEaten = 0
+
+    # Update the status and visibility of all power pellets
+    def update(self, dt):
+        for powerpellet in self.powerpellets:
+            powerpellet.update(dt)
+
+    # Create a new list of pellets based on data from a file
+    def createPelletList(self, pelletfile):
+        data = self.readPelletfile(pelletfile)        
+        for row in range(data.shape[0]):
+            for col in range(data.shape[1]):
+                if data[row][col] in ['.', '+']:
+                    # Create a new regular pellet
+                    self.pelletList.append(RegularPellet(row, col))
+                elif data[row][col] in ['P', 'p']:
+                    # Create a new power pellet and add it to both lists
+                    pp = PowerPellet(row, col)
+                    self.pelletList.append(pp)
+                    self.powerpellets.append(pp)
+
+    # Read in a data file containing information about the pellets
+    def readPelletfile(self, textfile):
+        return np.loadtxt(textfile, dtype='<U1')
+    
+    # Determine whether there are no more pellets left
+    def isEmpty(self):
+        if len(self.pelletList) == 0:
+            return True
+        return False
+    
+    # Render all pellets on the screen
+    def render(self, screen):
+        for pellet in self.pelletList:
+            pellet.render(screen)
+
+class AbstractSpritesheet(metaclass=abc.ABCMeta):
+    @abc.abstractmethod
+    def __init__(self):
+        pass
+    
+    @abc.abstractmethod
+    def getImage(self, x, y, width, height):
+        pass
+
+class Spritesheet(AbstractSpritesheet):
+    def __init__(self):
+        super().__init__()
+        # Load the sprite sheet image and set its transparent color key
+        self.sheet = pygame.image.load("spritesheet_mspacman.png").convert()
+        transcolor = self.sheet.get_at((0,0))
+        self.sheet.set_colorkey(transcolor)
+        # Scale the sprite sheet image to fit the size of the game screen
+        width = int(self.sheet.get_width() / BASETILEWIDTH * TILEWIDTH)
+        height = int(self.sheet.get_height() / BASETILEHEIGHT * TILEHEIGHT)
+        self.sheet = pygame.transform.scale(self.sheet, (width, height))
+    
+    # Extract an image from the sprite sheet based on its position and size
+    def getImage(self, x, y, width, height):
+        # Convert tile coordinates to pixel coordinates
+        x *= TILEWIDTH
+        y *= TILEHEIGHT
+        # Set a clip area within the sprite sheet corresponding to the desired image
+        self.sheet.set_clip(pygame.Rect(x, y, width, height))
+        # Return a subsurface of the sprite sheet containing only the desired image
+        return self.sheet.subsurface(self.sheet.get_clip())
+
