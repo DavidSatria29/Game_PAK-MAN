@@ -21,7 +21,10 @@ suara_menang = pygame.mixer.Sound('menang.wav')
 suara_makan = pygame.mixer.Sound('pelet.wav')
 suara_bunuh = pygame.mixer.Sound('bunuh.wav')
 suara_medkit = pygame.mixer.Sound('medkit.wav')
-
+suara_slowmo = pygame.mixer.Sound('slowmo.wav')
+suara_speed = pygame.mixer.Sound('speed.wav')
+suara_hantu = pygame.mixer.Sound('hantu.wav')
+suara_teleport = pygame.mixer.Sound('teleport.wav')
 pygame.mixer.music.load('musik2.mp3')
 pygame.mixer.music.play(-1)
 
@@ -216,12 +219,17 @@ class GameController(object):
                     suara_makan.play()
                 elif pellet.color == RED:
                     self.pacman.setSpeed(170)
+                    suara_speed.play()
                 elif pellet.color == BLUE:
                     self.pacman.setSpeed(70)
+                    suara_slowmo.play()
                 elif pellet.color == GREEN:
                     self.ghosts.reset()
+                    suara_teleport.play()
                 else:
                     self.ghosts.increaseSpedd()
+                    suara_hantu.play()
+
                 
             if self.pellets.isEmpty():
                 self.flashBG = True
