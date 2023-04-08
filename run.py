@@ -21,14 +21,16 @@ suara_menang = pygame.mixer.Sound('menang.wav')
 suara_makan = pygame.mixer.Sound('pelet.wav')
 suara_bunuh = pygame.mixer.Sound('bunuh.wav')
 suara_medkit = pygame.mixer.Sound('medkit.wav')
-suara_slowmo = pygame.mixer.Sound('slowmo.wav')
+suara_slowmo = pygame.mixer.Sound('slowmo.mp3')
 suara_speed = pygame.mixer.Sound('speed.wav')
-suara_hantu = pygame.mixer.Sound('hantu.wav')
+suara_hantu = pygame.mixer.Sound('hantu.mp3')
 suara_teleport = pygame.mixer.Sound('teleport.wav')
-suara_kerjabagus = pygame.mixer.Sound('kerjabagus.wav')
+suara_kerjabagus = pygame.mixer.Sound('kerjabagus.mp3')
+suara_hati2 = pygame.mixer.Sound('hati2.mp3')
+
 pygame.mixer.music.load('musik2.mp3')
 pygame.mixer.music.play(-1)
-suara_kerjabagus.play()
+suara_hati2.play()
 
 # Define GameController class
 class GameController(object):
@@ -61,6 +63,9 @@ class GameController(object):
         self.mazedata = MazeData()
 
 
+
+    # def musik(self):
+    #     self.jalan = pygame.mixer.Sound('jalan.mp3')
     # Define method to set game background
     def setBackground(self):
         # Create two surface objects for the normal and flashing background
