@@ -1,70 +1,50 @@
 import pygame
 
+class Menu:
+    def __init__(self, screen, title, options):
+        self.screen = screen
+        self.title = title
+        self.options = options
+        self.buttons = []
+        self.font = pygame.font.Font(None, 50)
+        self.selected_option = 0
+    
+    def add_button(self, button):
+        self.buttons.append(button)
+    
+    def draw(self):
+        title_text = self.font.render(self.title, True, (255,255,255))
+        title_rect = title_text.get_rect(center=(self.screen.get_width()/2, 100))
+        self.screen.blit(title_text, title_rect)
+        
+        button_top = title_rect.bottom + 50
+        for i, button in enumerate(self.buttons):
+            text = self.font.render(button.label, True, (255,255,255) if i != self.selected_option else (255,0,0))
+            rect = text.get_rect(center=(self.screen.get_width()/2, button_top + 70*i))
+            self.screen.blit(text, rect)
+    
+    def handle_event(self, event):
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_UP:
+                self.selected_option = (self.selected_option - 1) % len(self.buttons)
+            elif event.key == pygame.K_DOWN:
+                self.selected_option = (self.selected_option + 1) % len(self.buttons)
+            elif event.key == pygame.K_RETURN:
+                self.buttons[self.selected_option].select()
+
+class Button:
+    def __init__(self, label, callback):
+        self.label = label
+        self.callback = callback
+    
+    def select(self):
+        self.callback()
+
+# example usage
 pygame.init()
+screen = pygame.display.set_mode((800,600))
 
-# Set ukuran layar
-screen_width = 640
-screen_height = 480
-screen = pygame.display.set_mode((screen_width, screen_height))
-pygame.display.set_caption("Menu Game")
-
-# Load gambar background
-# bg_image = pygame.image.load("background.jpg")
-
-# Load font
-font = pygame.font.Font(None, 30)
-
-# Membuat tombol "Start"
-start_button = pygame.Rect(200, 200, 200, 50)
-start_text = font.render("Start", True, (255, 255, 255))
-start_text_rect = start_text.get_rect(center=start_button.center)
-
-# Membuat tombol "Quit"
-quit_button = pygame.Rect(200, 300, 200, 50)
-quit_text = font.render("Quit", True, (255, 255, 255))
-quit_text_rect = quit_text.get_rect(center=quit_button.center)
-
-# Loop utama
-running = True
-while running:
-    # Event handling
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            # Cek apakah tombol "Start" diklik
-            if start_button.collidepoint(event.pos):
-                # Panggil halaman keterangan
-                import keterangan
-                keterangan.run()
-                # Setelah selesai, tampilkan tombol "Run"
-                run_button = pygame.Rect(screen_width - 150, screen_height - 50, 100, 30)
-                run_text = font.render("Run", True, (255, 255, 255))
-                run_text_rect = run_text.get_rect(center=run_button.center)
-            # Cek apakah tombol "Run" diklik
-            elif 'run_button' in locals() and run_button.collidepoint(event.pos):
-                # Panggil game
-                import run
-                run.run()
-            # Cek apakah tombol "Quit" diklik
-            elif quit_button.collidepoint(event.pos):
-                running = False
-
-    # Tampilkan gambar background
-    # screen.blit(bg_image, (0, 0))
-
-    # Tampilkan tombol "Start" dan "Quit"
-    pygame.draw.rect(screen, (0, 0, 0), start_button)
-    screen.blit(start_text, start_text_rect)
-    pygame.draw.rect(screen, (0, 0, 0), quit_button)
-    screen.blit(quit_text, quit_text_rect)
-
-    # Jika tombol "Run" telah muncul, tampilkan tombol "Run"
-    if 'run_button' in locals():
-        pygame.draw.rect(screen, (0, 0, 0), run_button)
-        screen.blit(run_text, run_text_rect)
-
-    pygame.display.flip()
-
-# Keluar dari Pygame
-pygame.quit()
+menu = Menu(screen, "Main Menu", ["Start Game", "Settings", "Quit"])
+menu.add_button(Button("Start Game", lambda: print("starting game...")))
+menu.add_button(Button("Settings", lambda: print("opening settings menu...")))
+menu.add_button(Button("Quit", lambda: pygame.quit()))

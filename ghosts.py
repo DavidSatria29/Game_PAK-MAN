@@ -208,3 +208,8 @@ class GhostGroup(object):
         for ghost in self:
             ghost.render(screen)
 
+    def increaseSpedd(self):
+        for ghost in self:
+            ghost.setSpeed(170)
+        
+

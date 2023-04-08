@@ -43,7 +43,7 @@ class GameController(object):
         self.skills = None
         self.pause = Pause(True)
         self.level = 0
-        self.lives = 7
+        self.lives = 5
         self.score = 0
         self.textgroup = TextGroup()
         self.lifesprites = LifeSprites(self.lives)
@@ -213,13 +213,15 @@ class GameController(object):
                 if pellet.color == ORANGE: 
                     self.ghosts.startFreight()
                     suara_makan.play()
-                if pellet.color == RED:
+                elif pellet.color == RED:
                     self.pacman.setSpeed(170)
-                if pellet.color == BLUE:
+                elif pellet.color == BLUE:
                     self.pacman.setSpeed(70)
-                if pellet.color == GREEN:
+                elif pellet.color == GREEN:
                     self.ghosts.reset()
-                    
+                else:
+                    self.ghosts.increaseSpedd()
+                
             if self.pellets.isEmpty():
                 self.flashBG = True
                 self.hideEntities()
@@ -268,12 +270,12 @@ class GameController(object):
         # If a fruit instance already exists, handle collisions and destruction accordingly
         if self.fruit is not None:
             if self.pacman.collideCheck(self.fruit):
+                self.lives += 1
                 self.updateScore(self.fruit.points)
                 self.textgroup.addText(str(self.fruit.points), WHITE, self.fruit.position.x, self.fruit.position.y, 8, time=1)
                 fruitCaptured = False
                 for fruit in self.fruitCaptured:
                     if fruit.get_offset() == self.fruit.image.get_offset():
-                        self.lives += 1
                         fruitCaptured = True
                         break
                 if not fruitCaptured:
