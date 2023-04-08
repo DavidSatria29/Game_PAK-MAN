@@ -1,8 +1,11 @@
 import pygame
+from pygame.locals import *
+
 import os
 
 def run_game():
     os.system("python run.py")
+    
 pygame.init()
 
 # set up the screen
@@ -12,7 +15,7 @@ screen = pygame.display.set_mode((800, 600))
 font = pygame.font.SysFont("Arial", 24)
 
 # set up text
-text = "PERATURAN GAME PACMAN\n\n1. Pacman harus memakan semua titik dalam labirin tanpa ditangkap oleh hantu.\n2. Pacman dapat makan titik besar untuk sementara waktu dapat memakan hantu.\n3. Jangan sampai Pacman kehabisan nyawa atau permainan akan berakhir.\n4. Gunakan tombol panah untuk menggerakkan Pacman.\n\nTekan SPACE untuk mulai bermain."
+text = "PERATURAN GAME PAK-MAN\n\n1. Pak-Man harus memakan semua titik dalam labirin tanpa ditangkap oleh hantu.\n2. Pacman dapat makan titik besar untuk sementara waktu dapat memakan hantu.\n3. Jangan sampai Pacman kehabisan nyawa atau permainan akan berakhir.\n4. Gunakan tombol panah untuk menggerakkan Pacman.\n\nTekan SPACE untuk mulai bermain."
 
 # render text
 text_rendered = font.render(text, True, (255, 255, 255))
