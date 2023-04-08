@@ -20,6 +20,7 @@ suara_mati = pygame.mixer.Sound('mati.wav')
 suara_menang = pygame.mixer.Sound('menang.wav')
 suara_makan = pygame.mixer.Sound('pelet.wav')
 suara_bunuh = pygame.mixer.Sound('bunuh.wav')
+suara_medkit = pygame.mixer.Sound('medkit.wav')
 
 pygame.mixer.music.load('musik2.mp3')
 pygame.mixer.music.play(-1)
@@ -253,7 +254,11 @@ class GameController(object):
                         self.ghosts.hide()
                         suara_jalan.stop()
                         suara_mati.play()
-                        if self.lives <= 0:
+                        if self.lives == 1:
+                            self.pause.setPause(pauseTime=3, func=self.resetLevel)
+                            suara_medkit.play()
+                            suara_mati.stop()
+                        elif self.lives == 0 :
                             self.textgroup.showText(GAMEOVERTXT)
                             self.pause.setPause(pauseTime=3, func=self.restartGame)
                         else:
