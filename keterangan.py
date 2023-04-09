@@ -1,46 +1,33 @@
 import pygame
-from pygame.locals import *
 
-import os
+class Menu:
+    def __init__(self, screen):
+        self.screen = screen
+        self.buttons = []
+        self.font = pygame.font.Font(None, 50)
+        self.selected_option = 0
+        self.button_height = 70  # ketinggian setiap tombol
+        self.button_margin = 20  # jarak antara tombol
+        self.background_image = None
 
-def run_game():
-    os.system("python run.py")
+    def set_background_image(self, image_path):
+        self.background_image = pygame.image.load(image_path).convert()
     
+    def draw(self):
+        if self.background_image:
+            self.screen.blit(self.background_image, (0, 0))
+        else:
+            self.screen.fill((0, 0, 0))
+        
+        
 pygame.init()
-# set up the screen
-screen = pygame.display.set_mode((800, 600))
+screen = pygame.display.set_mode((448,576))
 
-# load font
-font = pygame.font.SysFont("Arial", 24)
+menu = Menu(screen)
+menu.set_background_image('peraturan.png')
 
-# set up text
-text = "PERATURAN GAME PAK-MAN\n\n1. Pak-Man harus memakan semua titik dalam labirin tanpa ditangkap oleh hantu.\n2. Pacman dapat makan titik besar untuk sementara waktu dapat memakan hantu.\n3. Jangan sampai Pacman kehabisan nyawa atau permainan akan berakhir.\n4. Gunakan tombol panah untuk menggerakkan Pacman.\n\nTekan SPACE untuk mulai bermain."
+running = True
 
-# render text
-text_rendered = font.render(text, True, (255, 255, 255))
+menu.draw()
 
-# set up background
-background = pygame.Surface(screen.get_size())
-background.fill((0, 0, 0))
 
-# set up clock
-clock = pygame.time.Clock()
-
-# run the game
-while True:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            break
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
-                run_game()
-            break
-                
-    
-    # draw the screen
-    screen.blit(background, (0, 0))
-    screen.blit(text_rendered, (50, 50))
-    pygame.display.flip()
-    
-    # set up the frame rate
-    clock.tick(60)

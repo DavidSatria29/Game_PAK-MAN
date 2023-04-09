@@ -55,7 +55,7 @@ class Button:
 
 # example usage
 pygame.init()
-screen = pygame.display.set_mode((800,600))
+screen = pygame.display.set_mode((448,576))
 
 menu = Menu(screen, "PAK-MAN", ["Start Game", "Settings", "Quit"])
 menu.set_background_image('background.png')
