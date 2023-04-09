@@ -20,7 +20,7 @@ class Sprite(ABC):
 class Spritesheet(Sprite):
     def __init__(self):
         # Load the sprite sheet image and set its transparent color key
-        self.__sheet = pygame.image.load("spritesheet_mspacman.png").convert()
+        self.__sheet = pygame.image.load("gambar/spritesheet_mspacman.png").convert()
         transcolor = self.__sheet.get_at((0,0))
         self.__sheet.set_colorkey(transcolor)
         # Scale the sprite sheet image to fit the size of the game screen

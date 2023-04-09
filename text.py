@@ -105,13 +105,12 @@ class TextGroup(object):
     def setupText(self):
         size = TILEHEIGHT
         self.alltext[SCORETXT] = Text("0".zfill(6), WHITE, 0, TILEHEIGHT, size)
-        # self.alltext[HIGHSCORETXT] = Text(str(self.highscore).zfill(6), WHITE, 9*TILEWIDTH, TILEHEIGHT, size)
         self.alltext[LEVELTXT] = Text(str(1).zfill(3), WHITE, 23*TILEWIDTH, TILEHEIGHT, size)
         self.alltext[READYTXT] = Text("READY!", YELLOW, 11.25*TILEWIDTH, 20*TILEHEIGHT, size, visible=False)
         self.alltext[PAUSETXT] = Text("PAUSED!", YELLOW, 10.625*TILEWIDTH, 20*TILEHEIGHT, size, visible=False)
         self.alltext[GAMEOVERTXT] = Text("GAMEOVER!", YELLOW, 10*TILEWIDTH, 20*TILEHEIGHT, size, visible=False)
+        self.alltext[RAMADHANEVENTTXT] = Text("Event Ramadhan!", WHITE, 7*TILEWIDTH, TILEHEIGHT, size, visible=False)
         self.addText("SCORE", WHITE, 0, 0, size)
-        self.addText("HIGH SCORE", WHITE, 9*TILEWIDTH, 0, size)
         self.addText("LEVEL", WHITE, 23*TILEWIDTH, 0, size)
 
     # Update all text labels in the group based on the specified delta time value
@@ -132,6 +131,7 @@ class TextGroup(object):
         self.alltext[READYTXT].visible = False
         self.alltext[PAUSETXT].visible = False
         self.alltext[GAMEOVERTXT].visible = False
+        self.alltext[RAMADHANEVENTTXT].visible = False
 
     # Update the score text label with the current score value
     def updateScore(self, score):
@@ -146,12 +146,6 @@ class TextGroup(object):
     def updateText(self, id, value):
         if id in self.alltext.keys():
             self.alltext[id].setText(value)
-    
-    def updatehighscore(self, score):
-        if score > self.highscore:
-                self.highscore = score
-                self.alltext[HIGHSCORETXT].setText(str(self.highscore).zfill(6))
-
 
     # Render all text labels in the group on the specified screen surface
     def render(self, screen):

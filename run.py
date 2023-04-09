@@ -45,7 +45,6 @@ class GameController(object):
         self.mazedata = MazeData()
         self.musik = musik()
         pygame.mixer.music.load('musik/musik2.mp3')
-
         
     # Define method to set game background
     def setBackground(self):
@@ -255,7 +254,7 @@ class GameController(object):
                         self.musik.mati.play()
                         if self.lives == 1:
                             self.pause.setPause(pauseTime=3, func=self.resetLevel)
-                            self.medkit.play()
+                            self.musik.medkit.play()
                             self.musik.mati.stop()
                         elif self.lives == 0 :
                             self.textgroup.showText(GAMEOVERTXT)
@@ -291,9 +290,11 @@ class GameController(object):
         if self.pellets.numEaten == 150:
             dt = self.clock.tick(30) / 1000.0
             self.ghosts.Ramadhanreset(dt)
+            self.textgroup.showText(RAMADHANEVENTTXT)
         if self.pellets.numEaten == 180:
             self.ghosts.reset()
             self.ghosts.increaseSpedd()
+            self.textgroup.hideText()
 
     # Define showEntities method to show entities on the screen
     def showEntities(self):
