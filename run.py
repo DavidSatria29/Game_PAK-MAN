@@ -289,11 +289,9 @@ class GameController(object):
     
     def checkRamadhanEvent(self):
         if self.pellets.numEaten == 150:
-            dt = 4
+            dt = self.clock.tick(30) / 1000.0
             self.ghosts.Ramadhanreset(dt)
-            print(dt)
-            self.ghosts.Ramadhanreset(dt)
-        if self.pellets.numEaten >= 180:
+        if self.pellets.numEaten == 180:
             self.ghosts.reset()
             self.ghosts.increaseSpedd()
 

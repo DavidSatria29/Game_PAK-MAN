@@ -205,7 +205,7 @@ class GhostGroup(object):
     def Ramadhanreset(self, dt) -> None:
         # Reset all ghosts in the group to their default state
             self.timer = 0
-            self.time = 10
+            self.time = 5
             self.timer += dt
             if self.timer <= self.time:
                 self.timer +=1

@@ -21,6 +21,11 @@ class Menu:
         self.buttons.append(button)
     
     def draw(self):
+        if self.background_image:
+            self.screen.blit(self.background_image, (0, 0))
+        else:
+            self.screen.fill((0, 0, 0))
+        
         title_text = self.font.render(self.title, True, (255,255,255))
         title_rect = title_text.get_rect(center=(self.screen.get_width()/2, 100))
         self.screen.blit(title_text, title_rect)
@@ -48,21 +53,16 @@ class Button:
     def select(self):
         self.callback()
 
-# # example usage
+# example usage
 pygame.init()
 screen = pygame.display.set_mode((800,600))
 
-    
-
-
 menu = Menu(screen, "PAK-MAN", ["Start Game", "Settings", "Quit"])
+menu.set_background_image('background.png')
 menu.add_button(Button("Start Game", lambda: subprocess.run(["python", "run.py"])))
-menu.add_button(Button("Peraturan Game", lambda: print("opening settings menu...")))
+menu.add_button(Button("Settings", lambda: print("opening settings menu...")))
 menu.add_button(Button("Quit", lambda: pygame.quit()))
 
-# Jalankan loop utama
-def run(self):
-    self.set_background_image('background.png')
 running = True
 while running:
     for event in pygame.event.get():
@@ -72,6 +72,5 @@ while running:
             menu.handle_event(event)
     menu.draw()
     pygame.display.flip()
-menu = Menu()
-menu.run()
+
 pygame.quit()
