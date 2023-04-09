@@ -27,7 +27,7 @@ menu = Menu(screen)
 menu.set_background_image('gambar/peraturan.png')
 
 running = True
-while running:
+while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False

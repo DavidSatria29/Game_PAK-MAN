@@ -1,5 +1,6 @@
 # Import required modules and classes 
 import pygame
+import subprocess
 from pygame.locals import *
 from constants import *
 from pacman import Pacman
@@ -13,6 +14,7 @@ from sprites import LifeSprites
 from sprites import MazeSprites
 from mazedata import MazeData
 from music import musik
+from menu import Menu
 
 # Define GameController class
 class GameController(object):
@@ -365,7 +367,6 @@ class GameController(object):
             self.screen.blit(self.fruitCaptured[i], (x, y))
 
         pygame.display.update()  # Update the display to show all changes made in this frame
-
 
 # Check if this module is being run as the main program
 if __name__ == "__main__":
