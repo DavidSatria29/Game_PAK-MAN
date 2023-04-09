@@ -124,7 +124,6 @@ class Inky(Ghost):
         self.goal: Vector2 = self.blinky.position + vec2
 
 
-
 class Clyde(Ghost):
     def __init__(self, node: int, pacman=None, blinky=None) -> None:
         super().__init__(node, pacman, blinky)
@@ -203,6 +202,17 @@ class GhostGroup(object):
         for ghost in self:
             ghost.reset()
 
+    def Ramadhanreset(self, dt) -> None:
+        # Reset all ghosts in the group to their default state
+        self.timer = 0
+        self.timer += dt
+        self.time = 0
+        for ghost in self:
+            if self.timer >= self.time:
+                self.time +=1
+                ghost.reset()
+                ghost.setSpeed(0)
+
     def render(self, screen) -> None:
         # Render all ghosts in the group to the specified screen
         for ghost in self:
@@ -211,5 +221,9 @@ class GhostGroup(object):
     def increaseSpedd(self):
         for ghost in self:
             ghost.setSpeed(170)
+        
+    def decreaseSpedd(self):
+        for ghost in self:
+            ghost.setSpeed(50)
         
 

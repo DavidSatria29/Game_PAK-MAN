@@ -81,7 +81,6 @@ class Text(object):
             x, y = self.position.asTuple()
             screen.blit(self.label, (x, y))
 
-# Define a TextGroup class to represent a group of text labels on screen
 class TextGroup(object):
     def __init__(self):
         # Initialize instance variables for the next unique ID, all text labels, and setup initial text labels
@@ -105,11 +104,13 @@ class TextGroup(object):
     def setupText(self):
         size = TILEHEIGHT
         self.alltext[SCORETXT] = Text("0".zfill(8), WHITE, 0, TILEHEIGHT, size)
+        self.alltext[HIGHESTSCORE] = Text("0".zfill(8), WHITE, 10*TILEWIDTH, TILEHEIGHT, size)
         self.alltext[LEVELTXT] = Text(str(1).zfill(3), WHITE, 23*TILEWIDTH, TILEHEIGHT, size)
         self.alltext[READYTXT] = Text("READY!", YELLOW, 11.25*TILEWIDTH, 20*TILEHEIGHT, size, visible=False)
         self.alltext[PAUSETXT] = Text("PAUSED!", YELLOW, 10.625*TILEWIDTH, 20*TILEHEIGHT, size, visible=False)
         self.alltext[GAMEOVERTXT] = Text("GAMEOVER!", YELLOW, 10*TILEWIDTH, 20*TILEHEIGHT, size, visible=False)
         self.addText("SCORE", WHITE, 0, 0, size)
+        self.addText("HIGHEST SCORE", WHITE, 10*TILEWIDTH, 0, 2 * size //3)
         self.addText("LEVEL", WHITE, 23*TILEWIDTH, 0, size)
 
     # Update all text labels in the group based on the specified delta time value
@@ -135,6 +136,10 @@ class TextGroup(object):
     def updateScore(self, score):
         self.updateText(SCORETXT, str(score).zfill(8))
 
+    # Update the highest score text label if the current score is greater than the existing highest score
+    def updateHighScore(self, score):
+        self.updateText(HIGHESTSCORE, str(score).zfill(8))
+
     # Update the level text label with the current level value
     def updateLevel(self, level):
         self.updateText(LEVELTXT, str(level + 1).zfill(3))
@@ -148,3 +153,4 @@ class TextGroup(object):
     def render(self, screen):
         for tkey in list(self.alltext.keys()):
             self.alltext[tkey].render(screen)
+

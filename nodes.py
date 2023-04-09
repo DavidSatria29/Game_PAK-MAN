@@ -14,10 +14,10 @@ class Node(object):
         self.neighbors = {UP:None, DOWN:None, LEFT:None, RIGHT:None, PORTAL:None}
         
         # Define a dictionary to store which entities (e.g. Pacman, Blinky, etc.) can move in each direction
-        self.access = {UP:[PACMAN, BLINKY, PINKY, INKY, CLYDE, FRUIT, SKILLS], 
-                       DOWN:[PACMAN, BLINKY, PINKY, INKY, CLYDE, FRUIT,SKILLS], 
-                       LEFT:[PACMAN, BLINKY, PINKY, INKY, CLYDE, FRUIT,SKILLS], 
-                       RIGHT:[PACMAN, BLINKY, PINKY, INKY, CLYDE, FRUIT,SKILLS]}
+        self.access = {UP:[PACMAN, BLINKY, PINKY, INKY, CLYDE, FRUIT], 
+                       DOWN:[PACMAN, BLINKY, PINKY, INKY, CLYDE, FRUIT], 
+                       LEFT:[PACMAN, BLINKY, PINKY, INKY, CLYDE, FRUIT], 
+                       RIGHT:[PACMAN, BLINKY, PINKY, INKY, CLYDE, FRUIT]}
         
     # Method to deny access to a certain direction for a certain entity
     def denyAccess(self, direction, entity):

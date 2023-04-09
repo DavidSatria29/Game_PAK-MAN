@@ -12,6 +12,7 @@ from text import TextGroup
 from sprites import LifeSprites
 from sprites import MazeSprites
 from mazedata import MazeData
+from menu import Menu
 
 #musik
 pygame.mixer.init()
@@ -20,7 +21,6 @@ suara_mati = pygame.mixer.Sound('mati.wav')
 suara_menang = pygame.mixer.Sound('menang.wav')
 suara_makan = pygame.mixer.Sound('pelet.wav')
 suara_bunuh = pygame.mixer.Sound('bunuh.wav')
-suara_medkit = pygame.mixer.Sound('medkit.wav')
 
 pygame.mixer.music.load('musik2.mp3')
 pygame.mixer.music.play(-1)
@@ -52,9 +52,7 @@ class GameController(object):
         self.flashTime = 0.2
         self.flashTimer = 0
         self.fruitCaptured = []
-        self.fruitNode = None
         self.mazedata = MazeData()
-
 
     # Define method to set game background
     def setBackground(self):
@@ -149,6 +147,7 @@ class GameController(object):
             self.checkPelletEvents()
             self.checkGhostEvents()
             self.checkFruitEvents()
+            self.checkRamadhanEvent()
 
         # Update Pacman if he is alive and game is not paused; otherwise just update Pacman
         if self.pacman.alive:
@@ -219,7 +218,7 @@ class GameController(object):
                 elif pellet.color == BLUE:
                     self.pacman.setSpeed(70)
                 elif pellet.color == GREEN:
-                    self.ghosts.reset()
+                    self.ghosts.decreaseSpedd()
                 else:
                     self.ghosts.increaseSpedd()
                 
@@ -254,11 +253,7 @@ class GameController(object):
                         self.ghosts.hide()
                         suara_jalan.stop()
                         suara_mati.play()
-                        if self.lives == 1:
-                            self.pause.setPause(pauseTime=3, func=self.resetLevel)
-                            suara_medkit.play()
-                            suara_mati.stop()
-                        elif self.lives == 0 :
+                        if self.lives <= 0:
                             self.textgroup.showText(GAMEOVERTXT)
                             self.pause.setPause(pauseTime=3, func=self.restartGame)
                         else:
@@ -275,7 +270,6 @@ class GameController(object):
         # If a fruit instance already exists, handle collisions and destruction accordingly
         if self.fruit is not None:
             if self.pacman.collideCheck(self.fruit):
-                self.lives += 1
                 self.updateScore(self.fruit.points)
                 self.textgroup.addText(str(self.fruit.points), WHITE, self.fruit.position.x, self.fruit.position.y, 8, time=1)
                 fruitCaptured = False
@@ -288,7 +282,15 @@ class GameController(object):
                 self.fruit = None
             elif self.fruit.destroy:
                 self.fruit = None
-
+    
+    def checkRamadhanEvent(self):
+        if self.pellets.numEaten == 160 :
+            dt = 1
+            self.ghosts.Ramadhanreset(dt)
+            print(dt)
+            self.ghosts.Ramadhanreset(dt)
+            return True
+        return False
 
     # Define showEntities method to show entities on the screen
     def showEntities(self):
@@ -307,7 +309,6 @@ class GameController(object):
         self.pause.paused = True
         self.startGame()
         self.textgroup.updateLevel(self.level)
-
 
     # Define restartGame method to reset the game to its initial state
     def restartGame(self):
@@ -334,7 +335,8 @@ class GameController(object):
     # Define updateScore method to update the player's score based on the points earned
     def updateScore(self, points):
         self.score += points  # Add the points earned to the player's score
-        self.textgroup.updateScore(self.score)  # Update score text to show the updated score
+        return self.textgroup.updateScore(self.score)  # Update score text to show the updated score
+
 
     # Define render method to draw all game objects and update the display
     def render(self):

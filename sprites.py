@@ -1,3 +1,5 @@
+from abc import ABC, abstractmethod
+
 # Import necessary libraries and modules
 import pygame
 from constants import *
@@ -10,30 +12,36 @@ BASETILEWIDTH = 16
 BASETILEHEIGHT = 16
 DEATH = 5
 
-# Define a class to load a sprite sheet image and extract individual images
-class Spritesheet(object):
+class Sprite(ABC):
+    @abstractmethod
+    def getImage(self, x, y, width, height):
+        pass
+        
+class Spritesheet(Sprite):
     def __init__(self):
         # Load the sprite sheet image and set its transparent color key
-        self.sheet = pygame.image.load("spritesheet_mspacman.png").convert()
-        transcolor = self.sheet.get_at((0,0))
-        self.sheet.set_colorkey(transcolor)
+        self.__sheet = pygame.image.load("spritesheet_mspacman.png").convert()
+        transcolor = self.__sheet.get_at((0,0))
+        self.__sheet.set_colorkey(transcolor)
         # Scale the sprite sheet image to fit the size of the game screen
-        width = int(self.sheet.get_width() / BASETILEWIDTH * TILEWIDTH)
-        height = int(self.sheet.get_height() / BASETILEHEIGHT * TILEHEIGHT)
-        self.sheet = pygame.transform.scale(self.sheet, (width, height))
-    
+        width = int(self.__sheet.get_width() / BASETILEWIDTH * TILEWIDTH)
+        height = int(self.__sheet.get_height() / BASETILEHEIGHT * TILEHEIGHT)
+        self.__sheet = pygame.transform.scale(self.__sheet, (width, height))
+
+
+    def getSheet(self):
+        return self.__sheet
     # Extract an image from the sprite sheet based on its position and size
     def getImage(self, x, y, width, height):
         # Convert tile coordinates to pixel coordinates
         x *= TILEWIDTH
         y *= TILEHEIGHT
         # Set a clip area within the sprite sheet corresponding to the desired image
-        self.sheet.set_clip(pygame.Rect(x, y, width, height))
+        self.__sheet.set_clip(pygame.Rect(x, y, width, height))
         # Return a subsurface of the sprite sheet containing only the desired image
-        return self.sheet.subsurface(self.sheet.get_clip())
+        return self.__sheet.subsurface(self.__sheet.get_clip())
 
 
-# Define a PacmanSprites class that inherits from the Spritesheet class
 class PacmanSprites(Spritesheet):
     def __init__(self, entity):
         # Call the parent constructor to load the sprite sheet image
@@ -90,6 +98,7 @@ class PacmanSprites(Spritesheet):
     # Define a method to get an image from the sprite sheet given its position
     def getImage(self, x, y):
         return Spritesheet.getImage(self, x, y, 2*TILEWIDTH, 2*TILEHEIGHT)
+
 
 
 # Define a GhostSprites class that inherits from the Spritesheet class

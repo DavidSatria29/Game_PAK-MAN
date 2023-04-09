@@ -40,11 +40,25 @@ class Button:
     def select(self):
         self.callback()
 
-# example usage
-pygame.init()
-screen = pygame.display.set_mode((800,600))
+# # example usage
+# pygame.init()
+# screen = pygame.display.set_mode((800,600))
 
-menu = Menu(screen, "Main Menu", ["Start Game", "Settings", "Quit"])
-menu.add_button(Button("Start Game", lambda: print("starting game...")))
-menu.add_button(Button("Settings", lambda: print("opening settings menu...")))
-menu.add_button(Button("Quit", lambda: pygame.quit()))
+# menu = Menu(screen, "Main Menu", ["Start Game", "Settings", "Quit"])
+# menu.add_button(Button("Start Game", lambda: print("starting game...")))
+# menu.add_button(Button("Settings", lambda: print("opening settings menu...")))
+# menu.add_button(Button("Quit", lambda: pygame.quit()))
+
+# running = True
+# while running:
+#     for event in pygame.event.get():
+#         if event.type == pygame.QUIT:
+#             running = False
+#         else:
+#             menu.handle_event(event)
+#     screen.fill((0,0,0))
+#     menu.draw()
+
+#     pygame.display.flip()
+
+# pygame.quit()
