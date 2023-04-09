@@ -12,18 +12,7 @@ from text import TextGroup
 from sprites import LifeSprites
 from sprites import MazeSprites
 from mazedata import MazeData
-from menu import Menu
-
-#musik
-pygame.mixer.init()
-suara_jalan = pygame.mixer.Sound('jalan.mp3')
-suara_mati = pygame.mixer.Sound('mati.wav')
-suara_menang = pygame.mixer.Sound('menang.wav')
-suara_makan = pygame.mixer.Sound('pelet.wav')
-suara_bunuh = pygame.mixer.Sound('bunuh.wav')
-
-pygame.mixer.music.load('musik2.mp3')
-pygame.mixer.music.play(-1)
+from music import musik
 
 # Define GameController class
 class GameController(object):
@@ -46,6 +35,7 @@ class GameController(object):
         self.level = 0
         self.lives = 5
         self.score = 0
+        self.highscore = 0
         self.textgroup = TextGroup()
         self.lifesprites = LifeSprites(self.lives)
         self.flashBG = False
@@ -53,7 +43,10 @@ class GameController(object):
         self.flashTimer = 0
         self.fruitCaptured = []
         self.mazedata = MazeData()
+        self.musik = musik()
+        pygame.mixer.music.load('musik/musik2.mp3')
 
+        
     # Define method to set game background
     def setBackground(self):
         # Create two surface objects for the normal and flashing background
@@ -95,6 +88,8 @@ class GameController(object):
         self.ghosts.inky.startNode.denyAccess(RIGHT, self.ghosts.inky)
         self.ghosts.clyde.startNode.denyAccess(LEFT, self.ghosts.clyde)
         self.mazedata.obj.denyGhostsAccess(self.ghosts, self.nodes)
+        # music play
+        pygame.mixer.music.play(-1)
 
     # Define outdated method to start the game 
     def startGame_old(self):      
@@ -188,12 +183,12 @@ class GameController(object):
                     if self.pacman.alive:
                         self.pause.setPause(playerPaused=True)
                         pygame.mixer.music.pause()
-                        suara_jalan.stop()
+                        self.musik.jalan.stop()
                         if not self.pause.paused:
                             self.textgroup.hideText()
                             self.showEntities()
                             pygame.mixer.music.unpause()
-                            suara_jalan.play(-1)
+                            self.musik.jalan.play(-1)
                         else:
                             self.textgroup.showText(PAUSETXT)
 
@@ -212,22 +207,27 @@ class GameController(object):
             if pellet.name == POWERPELLET:
                 if pellet.color == ORANGE: 
                     self.ghosts.startFreight()
-                    suara_makan.play()
+                    self.musik.makan.play()
                 elif pellet.color == RED:
                     self.pacman.setSpeed(170)
+                    self.musik.speed.play()
                 elif pellet.color == BLUE:
                     self.pacman.setSpeed(70)
+                    self.musik.slowmo.play()
                 elif pellet.color == GREEN:
-                    self.ghosts.decreaseSpedd()
+                    self.ghosts.reset()
+                    self.musik.teleport.play()
                 else:
                     self.ghosts.increaseSpedd()
+                    self.musik.hantu.play()
+
                 
             if self.pellets.isEmpty():
                 self.flashBG = True
                 self.hideEntities()
                 self.pause.setPause(pauseTime=3, func=self.nextLevel)
-                suara_menang.play()
-                suara_jalan.stop()
+                self.musik.menang.play()
+                self.musik.jalan.stop()
 
     # Define checkGhostEvents method to handle ghost-related events during gameplay
     def checkGhostEvents(self):
@@ -244,16 +244,20 @@ class GameController(object):
                     self.pause.setPause(pauseTime=1, func=self.showEntities)
                     ghost.startSpawn()
                     self.nodes.allowHomeAccess(ghost)
-                    suara_bunuh.play()
+                    self.musik.bunuh.play()
                 elif ghost.mode.current is not SPAWN:  # If ghost is not in "spawn" mode, update game state accordingly
                     if self.pacman.alive:
                         self.lives -=  1
                         self.lifesprites.removeImage()
                         self.pacman.die()
                         self.ghosts.hide()
-                        suara_jalan.stop()
-                        suara_mati.play()
-                        if self.lives <= 0:
+                        self.musik.jalan.stop()
+                        self.musik.mati.play()
+                        if self.lives == 1:
+                            self.pause.setPause(pauseTime=3, func=self.resetLevel)
+                            self.medkit.play()
+                            self.musik.mati.stop()
+                        elif self.lives == 0 :
                             self.textgroup.showText(GAMEOVERTXT)
                             self.pause.setPause(pauseTime=3, func=self.restartGame)
                         else:
@@ -284,13 +288,14 @@ class GameController(object):
                 self.fruit = None
     
     def checkRamadhanEvent(self):
-        if self.pellets.numEaten == 160 :
-            dt = 1
+        if self.pellets.numEaten == 150:
+            dt = 4
             self.ghosts.Ramadhanreset(dt)
             print(dt)
             self.ghosts.Ramadhanreset(dt)
-            return True
-        return False
+        if self.pellets.numEaten >= 180:
+            self.ghosts.reset()
+            self.ghosts.increaseSpedd()
 
     # Define showEntities method to show entities on the screen
     def showEntities(self):

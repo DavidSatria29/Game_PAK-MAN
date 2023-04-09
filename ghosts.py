@@ -204,14 +204,14 @@ class GhostGroup(object):
 
     def Ramadhanreset(self, dt) -> None:
         # Reset all ghosts in the group to their default state
-        self.timer = 0
-        self.timer += dt
-        self.time = 0
-        for ghost in self:
-            if self.timer >= self.time:
-                self.time +=1
-                ghost.reset()
-                ghost.setSpeed(0)
+            self.timer = 0
+            self.time = 10
+            self.timer += dt
+            if self.timer <= self.time:
+                self.timer +=1
+                for ghost in self:
+                    ghost.reset()
+                    ghost.setSpeed(0)
 
     def render(self, screen) -> None:
         # Render all ghosts in the group to the specified screen

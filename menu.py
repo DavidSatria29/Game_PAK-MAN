@@ -1,4 +1,6 @@
 import pygame
+import subprocess
+
 
 class Menu:
     def __init__(self, screen, title, options):
@@ -8,6 +10,12 @@ class Menu:
         self.buttons = []
         self.font = pygame.font.Font(None, 50)
         self.selected_option = 0
+        self.button_height = 70  # ketinggian setiap tombol
+        self.button_margin = 20  # jarak antara tombol
+        self.background_image = None
+
+    def set_background_image(self, image_path):
+        self.background_image = pygame.image.load(image_path).convert()
     
     def add_button(self, button):
         self.buttons.append(button)
@@ -17,7 +25,7 @@ class Menu:
         title_rect = title_text.get_rect(center=(self.screen.get_width()/2, 100))
         self.screen.blit(title_text, title_rect)
         
-        button_top = title_rect.bottom + 50
+        button_top = title_rect.bottom + 130
         for i, button in enumerate(self.buttons):
             text = self.font.render(button.label, True, (255,255,255) if i != self.selected_option else (255,0,0))
             rect = text.get_rect(center=(self.screen.get_width()/2, button_top + 70*i))
@@ -41,24 +49,29 @@ class Button:
         self.callback()
 
 # # example usage
-# pygame.init()
-# screen = pygame.display.set_mode((800,600))
+pygame.init()
+screen = pygame.display.set_mode((800,600))
 
-# menu = Menu(screen, "Main Menu", ["Start Game", "Settings", "Quit"])
-# menu.add_button(Button("Start Game", lambda: print("starting game...")))
-# menu.add_button(Button("Settings", lambda: print("opening settings menu...")))
-# menu.add_button(Button("Quit", lambda: pygame.quit()))
+    
 
-# running = True
-# while running:
-#     for event in pygame.event.get():
-#         if event.type == pygame.QUIT:
-#             running = False
-#         else:
-#             menu.handle_event(event)
-#     screen.fill((0,0,0))
-#     menu.draw()
 
-#     pygame.display.flip()
+menu = Menu(screen, "PAK-MAN", ["Start Game", "Settings", "Quit"])
+menu.add_button(Button("Start Game", lambda: subprocess.run(["python", "run.py"])))
+menu.add_button(Button("Peraturan Game", lambda: print("opening settings menu...")))
+menu.add_button(Button("Quit", lambda: pygame.quit()))
 
-# pygame.quit()
+# Jalankan loop utama
+def run(self):
+    self.set_background_image('background.png')
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type ==pygame.QUIT:
+            running = False
+        else:
+            menu.handle_event(event)
+    menu.draw()
+    pygame.display.flip()
+menu = Menu()
+menu.run()
+pygame.quit()

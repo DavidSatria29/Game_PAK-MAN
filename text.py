@@ -87,6 +87,7 @@ class TextGroup(object):
         self.nextid = 10
         self.alltext = {}
         self.setupText()
+        self.highscore = 0
         # Show the initial "READY!" text label
         self.showText(READYTXT)
 
@@ -103,14 +104,14 @@ class TextGroup(object):
     # Set up the initial text labels for score, level, and game status
     def setupText(self):
         size = TILEHEIGHT
-        self.alltext[SCORETXT] = Text("0".zfill(8), WHITE, 0, TILEHEIGHT, size)
-        self.alltext[HIGHESTSCORE] = Text("0".zfill(8), WHITE, 10*TILEWIDTH, TILEHEIGHT, size)
+        self.alltext[SCORETXT] = Text("0".zfill(6), WHITE, 0, TILEHEIGHT, size)
+        # self.alltext[HIGHSCORETXT] = Text(str(self.highscore).zfill(6), WHITE, 9*TILEWIDTH, TILEHEIGHT, size)
         self.alltext[LEVELTXT] = Text(str(1).zfill(3), WHITE, 23*TILEWIDTH, TILEHEIGHT, size)
         self.alltext[READYTXT] = Text("READY!", YELLOW, 11.25*TILEWIDTH, 20*TILEHEIGHT, size, visible=False)
         self.alltext[PAUSETXT] = Text("PAUSED!", YELLOW, 10.625*TILEWIDTH, 20*TILEHEIGHT, size, visible=False)
         self.alltext[GAMEOVERTXT] = Text("GAMEOVER!", YELLOW, 10*TILEWIDTH, 20*TILEHEIGHT, size, visible=False)
         self.addText("SCORE", WHITE, 0, 0, size)
-        self.addText("HIGHEST SCORE", WHITE, 10*TILEWIDTH, 0, 2 * size //3)
+        self.addText("HIGH SCORE", WHITE, 9*TILEWIDTH, 0, size)
         self.addText("LEVEL", WHITE, 23*TILEWIDTH, 0, size)
 
     # Update all text labels in the group based on the specified delta time value
@@ -134,11 +135,8 @@ class TextGroup(object):
 
     # Update the score text label with the current score value
     def updateScore(self, score):
-        self.updateText(SCORETXT, str(score).zfill(8))
+        self.updateText(SCORETXT, str(score).zfill(6))
 
-    # Update the highest score text label if the current score is greater than the existing highest score
-    def updateHighScore(self, score):
-        self.updateText(HIGHESTSCORE, str(score).zfill(8))
 
     # Update the level text label with the current level value
     def updateLevel(self, level):
@@ -148,6 +146,12 @@ class TextGroup(object):
     def updateText(self, id, value):
         if id in self.alltext.keys():
             self.alltext[id].setText(value)
+    
+    def updatehighscore(self, score):
+        if score > self.highscore:
+                self.highscore = score
+                self.alltext[HIGHSCORETXT].setText(str(self.highscore).zfill(6))
+
 
     # Render all text labels in the group on the specified screen surface
     def render(self, screen):
