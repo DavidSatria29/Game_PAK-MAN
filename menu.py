@@ -1,6 +1,7 @@
 import pygame
 import subprocess
 
+
 class Menu:
     def __init__(self, screen, title, options):
         self.screen = screen
@@ -11,6 +12,10 @@ class Menu:
         self.selected_option = 0
         self.button_height = 70  # ketinggian setiap tombol
         self.button_margin = 20  # jarak antara tombol
+        self.background_image = None
+
+    def set_background_image(self, image_path):
+        self.background_image = pygame.image.load(image_path).convert()
     
     def add_button(self, button):
         self.buttons.append(button)
@@ -47,12 +52,17 @@ class Button:
 pygame.init()
 screen = pygame.display.set_mode((800,600))
 
+    
+
+
 menu = Menu(screen, "PAK-MAN", ["Start Game", "Settings", "Quit"])
 menu.add_button(Button("Start Game", lambda: subprocess.run(["python", "run.py"])))
 menu.add_button(Button("Peraturan Game", lambda: print("opening settings menu...")))
 menu.add_button(Button("Quit", lambda: pygame.quit()))
 
 # Jalankan loop utama
+def run(self):
+    self.set_background_image('background.png')
 running = True
 while running:
     for event in pygame.event.get():
@@ -60,9 +70,8 @@ while running:
             running = False
         else:
             menu.handle_event(event)
-    screen.fill((0,0,0))
     menu.draw()
-    
     pygame.display.flip()
-    
+menu = Menu()
+menu.run()
 pygame.quit()
