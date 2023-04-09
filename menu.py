@@ -56,17 +56,17 @@ class Button:
 # example usage
 pygame.init()
 screen = pygame.display.set_mode((448,576))
-title = pygame.display.set_caption("PAK-MAN")
-menu = Menu(screen, title, ["Start Game", "Settings", "Quit"])
+
+menu = Menu(screen, "PAK-MAN", ["Start Game", "Settings", "Quit"])
 menu.set_background_image('gambar/background.png')
 menu.add_button(Button("Start Game", lambda: subprocess.run(["python", "run.py"])))
-menu.add_button(Button("Settings", lambda: print("opening settings menu...")))
+menu.add_button(Button("Settings", lambda: subprocess.run(["python", "keterangan.py"])))
 menu.add_button(Button("Quit", lambda: pygame.quit()))
 
 running = True
 while running:
     for event in pygame.event.get():
-        if event.type ==pygame.QUIT:
+        if event.type == pygame.QUIT:
             running = False
         else:
             menu.handle_event(event)
