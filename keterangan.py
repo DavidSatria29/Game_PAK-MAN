@@ -7,7 +7,6 @@ def run_game():
     os.system("python run.py")
     
 pygame.init()
-
 # set up the screen
 screen = pygame.display.set_mode((800, 600))
 
@@ -45,6 +44,3 @@ while True:
     
     # set up the frame rate
     clock.tick(60)
-
-# quit the game
-pygame.quit()
